@@ -1,0 +1,82 @@
+# Config File For CenterDet
+work:
+  proj_name: centerdet
+  save_path: workspace
+#  weights_path: # YOUR_MODEL_PATH
+model:
+  arch:
+    name: OneStage
+    backbone:
+      name: ShuffleNetV2
+      model_size: 1.0x
+      out_stages: [1, 2, 3, 4]
+      kernal_size: 5
+      activation: LeakyReLU
+    neck:
+      name: FPN
+      in_channels: [24, 116, 232, 464]
+      out_channels: 96
+  #    start_level: 0
+  #    num_outs: 3
+    head:
+      name: TTFHead
+      in_channels: 96
+  #    feat_channels: 64
+      num_classes: 10
+data:
+  train:
+    name: coco # label format
+    img_path: mchar/mchar_train
+    ann_path: mchar/mchar_coco_train.json
+    input_size: [320, 320] # [w, h]
+    keep_ratio: True
+    pipeline:
+      perspective: 0.0
+      scale: [0.6, 1.4]
+      stretch: [[1, 1], [1, 1]]
+      rotation: 0
+      shear: 0
+      translate: 0.2
+      flip: 0
+      brightness: 0.2
+      contrast: [0.8, 1.2]
+      saturation: [0.8, 1.2]
+      normalize: [[0, 0, 0], [255, 255, 255]]
+      class_num: 10
+      gt_type: ttfnet
+  val:
+    name: coco
+    img_path: mchar/mchar_val
+    ann_path: mchar/mchar_coco_val.json
+    input_size: [320, 320] # [w, h]
+    keep_ratio: True
+    pipeline:
+      normalize: [[0, 0, 0], [255, 255, 255]]
+      class_num: 10
+      gt_type: ttfnet
+#device:
+#  gpu_ids: [0]
+#  workers_per_gpu: 4
+#  batchsize_per_gpu: 64
+schedule:
+  optimizer:
+    name: SGD
+    lr: 0.12
+    momentum: 0.9
+    weight_decay: 0.0001
+  warmup:
+    name: linear
+    steps: 300
+    ratio: 0.1
+  total_epochs: 60
+  lr_schedule:
+    name: LambdaLR #MultiStepLR
+    lr_final: 0.02
+#    milestones: [130, 160, 150, 155]
+#    gamma: 0.1
+  val_intervals: 4
+evaluator:
+  name: CocoDetectionEvaluator
+  save_key: mAP
+
+class_names: ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']
