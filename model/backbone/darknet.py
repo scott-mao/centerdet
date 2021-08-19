@@ -184,7 +184,7 @@ class CSPDarknet(nn.Module):
             Conv(base_channels * 2, base_channels * 4, 3, 2, act=act),
             CSPLayer(
                 base_channels * 4, base_channels * 4,
-                n=base_depth * 3, depthwise=depthwise, act=act,
+                n=base_depth * 3, depthwise=depthwise, act=act
             ),
         )
 
@@ -193,7 +193,7 @@ class CSPDarknet(nn.Module):
             Conv(base_channels * 4, base_channels * 8, 3, 2, act=act),
             CSPLayer(
                 base_channels * 8, base_channels * 8,
-                n=base_depth * 3, depthwise=depthwise, act=act,
+                n=base_depth * 3, depthwise=depthwise, act=act
             ),
         )
 
@@ -203,7 +203,7 @@ class CSPDarknet(nn.Module):
             SPPBottleneck(base_channels * 16, base_channels * 16, activation=act),
             CSPLayer(
                 base_channels * 16, base_channels * 16, n=base_depth,
-                shortcut=False, depthwise=depthwise, act=act,
+                shortcut=False, depthwise=depthwise, act=act
             ),
         )
 
@@ -224,10 +224,14 @@ class CSPDarknet(nn.Module):
 
 
 if __name__ == '__main__':
+
+    from flops import flops_info
+
     inp = torch.randn((2, 3, 320, 320))
+    model = CSPDarknet(0.33, 0.25, depthwise=True, act="silu")
 
-
-
+    # print(model)
+    flops_info(model)
 
 
 
