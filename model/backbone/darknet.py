@@ -21,9 +21,8 @@ def get_activation(name="silu", inplace=True):
 
 class BaseConv(nn.Module):
     """A Conv2d -> Batchnorm -> silu/leaky relu block"""
-
     def __init__(self, in_channels, out_channels, ksize, stride, groups=1, bias=False, act="silu"):
-        super().__init__()
+        super(BaseConv, self).__init__()
         # same padding
         pad = (ksize - 1) // 2
         self.conv = nn.Conv2d(
@@ -48,7 +47,7 @@ class BaseConv(nn.Module):
 class DWConv(nn.Module):
     """Depthwise Conv + Conv"""
     def __init__(self, in_channels, out_channels, ksize, stride=1, act="silu"):
-        super().__init__()
+        super(DWConv, self).__init__()
         self.dconv = BaseConv(
             in_channels, in_channels, ksize=ksize,
             stride=stride, groups=in_channels, act=act
@@ -67,7 +66,7 @@ class Focus(nn.Module):
     """Focus width and height information into channel space."""
 
     def __init__(self, in_channels, out_channels, ksize=1, stride=1, act="silu"):
-        super().__init__()
+        super(Focus, self).__init__()
         self.conv = BaseConv(in_channels * 4, out_channels, ksize, stride, act=act)
 
     def forward(self, x):
@@ -88,7 +87,7 @@ class Bottleneck(nn.Module):
         self, in_channels, out_channels, shortcut=True,
         expansion=0.5, depthwise=False, act="silu"
     ):
-        super().__init__()
+        super(Bottleneck, self).__init__()
         hidden_channels = int(out_channels * expansion)
         Conv = DWConv if depthwise else BaseConv
         self.conv1 = BaseConv(in_channels, hidden_channels, 1, stride=1, act=act)
@@ -105,7 +104,7 @@ class Bottleneck(nn.Module):
 class SPPBottleneck(nn.Module):
     """Spatial pyramid pooling layer used in YOLOv3-SPP"""
     def __init__(self, in_channels, out_channels, kernel_sizes=(5, 9, 13), activation="silu"):
-        super().__init__()
+        super(SPPBottleneck, self).__init__()
         hidden_channels = in_channels // 2
         self.conv1 = BaseConv(in_channels, hidden_channels, 1, stride=1, act=activation)
         self.m = nn.ModuleList(
@@ -135,7 +134,7 @@ class CSPLayer(nn.Module):
             n (int): number of Bottlenecks. Default value: 1.
         """
         # ch_in, ch_out, number, shortcut, groups, expansion
-        super().__init__()
+        super(CSPLayer, self).__init__()
         hidden_channels = int(out_channels * expansion)  # hidden channels
         self.conv1 = BaseConv(in_channels, hidden_channels, 1, stride=1, act=act)
         self.conv2 = BaseConv(in_channels, hidden_channels, 1, stride=1, act=act)
@@ -159,9 +158,8 @@ class CSPDarknet(nn.Module):
     def __init__(
         self, dep_mul, wid_mul,
         out_features=("dark3", "dark4", "dark5"),
-        depthwise=False, act="silu",
-    ):
-        super().__init__()
+        depthwise=False, act="silu"):
+        super(CSPDarknet, self).__init__()
         assert out_features, "please provide output features of Darknet"
         self.out_features = out_features
         Conv = DWConv if depthwise else BaseConv
