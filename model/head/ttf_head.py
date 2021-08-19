@@ -72,13 +72,13 @@ class TTFHead(nn.Module):
                  score_thr=0.02,
                  nms_thr=0.4,
                  topk=100,
-                 stride=4,
-                 wh_offset_base=16, use_asg=True):
+                 use_asg=False,
+                 wh_offset_base=16):
         super(TTFHead, self).__init__()
         self.topk = topk
         self.wh_offset_base = wh_offset_base
         self.num_classes = num_classes
-        self.stride = stride
+        self.stride = 4
         self.base_loc = None
         self.score_thr = score_thr
         self.nms_thr = nms_thr

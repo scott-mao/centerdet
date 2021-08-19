@@ -25,11 +25,15 @@ model:
       loc_weight: 1.
       reg_weight: 5.
       num_classes: 80
+      score_thr: 0.02
+      nms_thr: 0.4
+      topk: 100
+      use_asg: False
 data:
   train:
     name: coco # label format
-    img_path: coco/COCO_2017_Train_Images/train2017
-    ann_path: coco/COCO_2017_Train_Val_annotations/annotations/instances_train2017.json
+    img_path: coco/train2017
+    ann_path: coco/annotations/instances_train2017.json
     input_size: [320, 320] # [w, h]
     keep_ratio: True
     pipeline:
@@ -47,16 +51,16 @@ data:
       class_num: 80
       gt_type: ttfnet
     loader:
-      batch_size: 40
-      num_workers: 12
+      batch_size: 96
+      num_workers: 8
       shuffle: True
       pin_memory: True
       drop_last: True
 
   val:
     name: coco
-    img_path: coco/COCO_2017_Val_Images/val2017
-    ann_path: coco/COCO_2017_Train_Val_annotations/annotations/instances_val2017.json
+    img_path: coco/val2017
+    ann_path: coco/annotations/instances_val2017.json
     input_size: [320, 320] # [w, h]
     keep_ratio: True
     pipeline:
