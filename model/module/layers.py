@@ -65,18 +65,22 @@ class ASGModule(nn.Module):
         super(ASGModule, self).__init__()
         self.lam = lam
 
-    def forward(self, x, gaussian_k):
+    def forward(self, x):
         # x -> [b, 80, feat_w, feat_h]
         # gaussian_k -> [b, 80, feat_w, feat_h]
         b, ch, feat_w, feat_h = x.shape
         max_reduce_map, _ = torch.max(x, dim=1, keepdim=False)
-        softmax = torch.softmax(max_reduce_map.view(b, -1), dim=-1).view(b, 1, feat_w, feat_h)
-        ags = softmax * gaussian_k
-        return (1 - self.lam) + self.lam * ags
+        softmax = torch.softmax(max_reduce_map.view(b, -1), dim=-1).view(b, feat_w, feat_h)
+        return (1 - self.lam) + self.lam * softmax
 
 
 
 if __name__ == '__main__':
-    m = ConvNormAct(3, 3)
-    print(m)
+    # m = ConvNormAct(3, 3)
+    # print(m)
+    m = ASGModule()
+    inp1 = torch.randn((4, 80, 40, 40))
+    inp2 = torch.randn((4, 80, 40, 40))
+    print(m(inp2).shape)
+
 

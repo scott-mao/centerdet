@@ -133,7 +133,7 @@ def giou_loss(pred,
 def ciou_loss(pred,
               target,
               weight,
-              avg_factor=None, ags_weight=None):
+              avg_factor=None, asg_weight=None):
     """
     CIoU loss.
     Computing the CIoU loss between a set of predicted bboxes and target bboxes.
@@ -143,6 +143,7 @@ def ciou_loss(pred,
     weight = weight[pos_mask].float()
     if avg_factor is None:
         avg_factor = torch.sum(pos_mask).float().item() + 1e-6
+
     bboxes1 = pred[pos_mask].view(-1, 4)
     bboxes2 = target[pos_mask].view(-1, 4)
 
@@ -179,7 +180,10 @@ def ciou_loss(pred,
     # gious = ious - (enclose_area - u) / enclose_area
     # iou_distance = 1 - ciou
     # if ags_weight is not None:
-    ic(ciou.shape)
+
+    if asg_weight is not None:
+        asg = asg_weight[pos_mask]
+        ciou = ciou * asg
 
     return torch.sum((1 - ciou) * weight) / avg_factor
 

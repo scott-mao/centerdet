@@ -4,7 +4,7 @@ import torch.nn.functional as F
 import numpy as np
 from collections import OrderedDict
 
-from model.module.layers import ConvNormAct, LiteConv
+from model.module.layers import ConvNormAct, LiteConv, ASGModule
 from model.loss.iou_loss import IoULoss, giou_loss, ciou_loss
 from model.loss.focal_loss import FocalLoss
 from data.transform.warp import warp_boxes
@@ -82,11 +82,14 @@ class TTFHead(nn.Module):
         self.base_loc = None
         self.score_thr = score_thr
         self.nms_thr = nms_thr
-
+        self.use_asg = use_asg
         # self.giou_loss = IoULoss()
         self.focal_loss = FocalLoss()
         self.loc_weight = loc_weight
         self.reg_weight = reg_weight
+
+        if self.use_asg:
+            self.asg_block = ASGModule(lam=0.5)
 
         self.hm_head = HeadModuleLite(in_channels, ch_out=hm_head_planes, planes_out=num_classes)
         self.tlrb_head = HeadModuleLite(in_channels, ch_out=wh_head_planes, planes_out=4)
@@ -318,8 +321,19 @@ class TTFHead(nn.Module):
         mask = weight.view(-1, feat_h, feat_w)
         avg_factor = weight.sum() + 1e-4
 
+
         hm_loss = self.focal_loss(pred_hm, gt_hm, pos_weight) * self.loc_weight
-        reg_loss = ciou_loss(pred_box, boxes, mask, avg_factor=avg_factor) * self.reg_weight
+
+        # ASG Module
+        if self.use_asg:
+            asg_weight = self.asg_block(pred_hm) # shape -> [b, h, w]
+            reg_loss = ciou_loss(pred_box,
+                                 boxes,
+                                 mask,
+                                 avg_factor=avg_factor,
+                                 asg_weight=asg_weight) * self.reg_weight
+        else:
+            reg_loss = ciou_loss(pred_box, boxes, mask, avg_factor=avg_factor) * self.reg_weight
 
         return hm_loss, reg_loss
 
