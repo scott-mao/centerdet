@@ -5,23 +5,24 @@ Copy from YOLOX
 
 import torch
 import torch.nn as nn
+from model.module.layers import act_layers
 
 
-def get_activation(name="silu", inplace=True):
-    if name == "silu":
-        module = nn.SiLU(inplace=inplace)
-    elif name == "relu":
-        module = nn.ReLU(inplace=inplace)
-    elif name == "lrelu":
-        module = nn.LeakyReLU(0.1, inplace=inplace)
-    else:
-        raise AttributeError("Unsupported act type: {}".format(name))
-    return module
+# def get_activation(name="silu", inplace=True):
+#     if name == "silu":
+#         module = nn.SiLU(inplace=inplace)
+#     elif name == "relu":
+#         module = nn.ReLU(inplace=inplace)
+#     elif name == "lrelu":
+#         module = nn.LeakyReLU(0.1, inplace=inplace)
+#     else:
+#         raise AttributeError("Unsupported act type: {}".format(name))
+#     return module
 
 
 class BaseConv(nn.Module):
     """A Conv2d -> Batchnorm -> silu/leaky relu block"""
-    def __init__(self, in_channels, out_channels, ksize, stride, groups=1, bias=False, act="silu"):
+    def __init__(self, in_channels, out_channels, ksize, stride, groups=1, bias=False, act="SiLU"):
         super(BaseConv, self).__init__()
         # same padding
         pad = (ksize - 1) // 2
@@ -35,7 +36,7 @@ class BaseConv(nn.Module):
             bias=bias,
         )
         self.bn = nn.BatchNorm2d(out_channels)
-        self.act = get_activation(act, inplace=True)
+        self.act = act_layers(act, inplace=True)
 
     def forward(self, x):
         return self.act(self.bn(self.conv(x)))
@@ -46,7 +47,7 @@ class BaseConv(nn.Module):
 
 class DWConv(nn.Module):
     """Depthwise Conv + Conv"""
-    def __init__(self, in_channels, out_channels, ksize, stride=1, act="silu"):
+    def __init__(self, in_channels, out_channels, ksize, stride=1, act="SiLU"):
         super(DWConv, self).__init__()
         self.dconv = BaseConv(
             in_channels, in_channels, ksize=ksize,
@@ -65,7 +66,7 @@ class DWConv(nn.Module):
 class Focus(nn.Module):
     """Focus width and height information into channel space."""
 
-    def __init__(self, in_channels, out_channels, ksize=1, stride=1, act="silu"):
+    def __init__(self, in_channels, out_channels, ksize=1, stride=1, act="SiLU"):
         super(Focus, self).__init__()
         self.conv = BaseConv(in_channels * 4, out_channels, ksize, stride, act=act)
 
@@ -85,7 +86,7 @@ class Bottleneck(nn.Module):
     # Standard bottleneck
     def __init__(
         self, in_channels, out_channels, shortcut=True,
-        expansion=0.5, depthwise=False, act="silu"
+        expansion=0.5, depthwise=False, act="SiLU"
     ):
         super(Bottleneck, self).__init__()
         hidden_channels = int(out_channels * expansion)
@@ -103,7 +104,7 @@ class Bottleneck(nn.Module):
 
 class SPPBottleneck(nn.Module):
     """Spatial pyramid pooling layer used in YOLOv3-SPP"""
-    def __init__(self, in_channels, out_channels, kernel_sizes=(5, 9, 13), activation="silu"):
+    def __init__(self, in_channels, out_channels, kernel_sizes=(5, 9, 13), activation="SiLU"):
         super(SPPBottleneck, self).__init__()
         hidden_channels = in_channels // 2
         self.conv1 = BaseConv(in_channels, hidden_channels, 1, stride=1, act=activation)
@@ -125,7 +126,7 @@ class CSPLayer(nn.Module):
 
     def __init__(
         self, in_channels, out_channels, n=1,
-        shortcut=True, expansion=0.5, depthwise=False, act="silu"
+        shortcut=True, expansion=0.5, depthwise=False, act="SiLU"
     ):
         """
         Args:
@@ -157,7 +158,7 @@ class CSPDarknet(nn.Module):
     def __init__(
         self, dep_mul=0.33, wid_mul=0.25,
         out_features=('dark2', 'dark3', 'dark4', 'dark5'),
-        depthwise=False, act="silu", pretrain=True):
+        depthwise=False, act="SiLU", pretrain=True):
         super(CSPDarknet, self).__init__()
 
         assert out_features, 'please provide output features of Darknet'
@@ -243,13 +244,13 @@ if __name__ == '__main__':
 
     from flops import flops_info
 
-    # inp = torch.randn((2, 3, 320, 320))
-    model = CSPDarknet(0.33, 0.25, depthwise=True, act="silu")
+    inp = torch.randn((2, 3, 320, 320))
+    model = CSPDarknet(0.33, 0.25, depthwise=True, act="SiLU")
 
 
     # print(model)
     # flops_info(model)
 
-    # for x in model(inp):
-    #     print(x.shape)
+    for x in model(inp):
+        print(x.shape)
 

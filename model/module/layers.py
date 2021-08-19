@@ -8,16 +8,17 @@ activations = {
     'ReLU6': nn.ReLU6,
     'SELU': nn.SELU,
     'ELU': nn.ELU,
+    'SiLU': nn.SiLU,
     'None': nn.Identity,
 }
 
 
-def act_layers(name):
-    assert name in activations.keys()
+def act_layers(name, inplace=True):
+    assert name in activations.keys(), AttributeError("Unsupported act type: {}".format(name))
     if name == 'LeakyReLU':
-        return nn.LeakyReLU(negative_slope=0.1, inplace=True)
+        return nn.LeakyReLU(negative_slope=0.1, inplace=inplace)
     else:
-        return activations[name](inplace=True)
+        return activations[name](inplace=inplace)
 
 
 class ConvNormAct(nn.Module):
