@@ -102,8 +102,8 @@ def main(opt):
     if opt.resume:
         trainer.resume(weigth_path)
 
-    # trainer.test()
-    # exit(1)
+    trainer.test()
+    exit(1)
 
 
     trainer.run(train_loader, val_loader, evaluator)

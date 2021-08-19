@@ -12,7 +12,7 @@ import torch.optim as optim
 from data.gt_builder.center_gt import center_targets
 from tools import plot_lr_scheduler
 from icecream import ic
-from data.dataset import build_loader
+# from data.dataset import build_loader
 from tqdm import tqdm
 
 
@@ -20,11 +20,11 @@ if __name__ == '__main__':
     # ckpt = torch.load('/home/tjm/Documents/python/pycharmProjects/centerdet/samples/mbv3_large.old.pth.tar', map_location='cpu')['state_dict']
     # for k, v in ckpt.items():
     #     print(k, v.shape)
-    load_config(cfg, 'config/centerdet.yaml')
+    load_config(cfg, 'config/centerdet_csp.yaml')
     # # print(cfg.data)
-    loader = build_loader(cfg.data.train, 'train')
-    for i in tqdm(loader):
-        pass
+    # loader = build_loader(cfg.data.train, 'train')
+    # for i in tqdm(loader):
+    #     pass
     # --------------------------------- test dataset -------------------------------#
     # train_dataset = build_dataset(cfg.data.train, 'train')
     #
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     # plt.show()
     #--------------------------------------------------------------------------------#
 
-    # model = build_model(cfg.model)
-    # inp = torch.randn((4, 3, 320, 320))
-    # im = model(inp)
-    # print(im[1].shape)
+    model = build_model(cfg.model)
+    inp = torch.randn((4, 3, 320, 320))
+    im = model(inp)
+    print(im[1].shape)

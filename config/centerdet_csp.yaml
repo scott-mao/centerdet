@@ -8,11 +8,11 @@ model:
   arch:
     name: OneStage
     backbone:
-      name: PP-MobileNetV3
-      scale: 1.
-      model_size: large
-      feature_maps: [5, 8, 14, 17]
-      with_extra_blocks: True
+      name: CSPDarkNet
+      dep_mul: 0.33
+      wid_mul: 0.25
+      out_features: ['dark2', 'dark3', 'dark4', 'dark5']
+      depthwise: True
     neck:
       name: FPNLite
       planes: [96, 48, 24]

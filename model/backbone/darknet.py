@@ -156,7 +156,7 @@ class CSPLayer(nn.Module):
 class CSPDarknet(nn.Module):
     def __init__(
         self, dep_mul=0.33, wid_mul=0.25,
-        out_features=('dark2', 'dark3', 'dark4', 'dark5'),
+        out_features=['dark2', 'dark3', 'dark4', 'dark5'],
         depthwise=False, act="SiLU", pretrain=True):
         super(CSPDarknet, self).__init__()
 
@@ -167,7 +167,6 @@ class CSPDarknet(nn.Module):
         base_channels = int(wid_mul * 64)  # 64
         base_depth = max(round(dep_mul * 3), 1)  # 3
 
-
         if dep_mul == 0.33 and wid_mul == 0.25:
             self.model_tag = 'nano'
         else:
@@ -176,50 +175,33 @@ class CSPDarknet(nn.Module):
         self.out_channels = [base_channels * 2, base_channels * 4, base_channels * 8, base_channels * 16]
         # stem
         self.stem = Focus(3, base_channels, ksize=3, act=act)
-
         # dark2
         self.dark2 = nn.Sequential(
             Conv(base_channels, base_channels * 2, 3, 2, act=act),
-            CSPLayer(
-                base_channels * 2, base_channels * 2,
-                n=base_depth, depthwise=depthwise, act=act
-            ),
+            CSPLayer(base_channels * 2, base_channels * 2, n=base_depth, depthwise=depthwise, act=act)
         )
-
         # dark3
         self.dark3 = nn.Sequential(
             Conv(base_channels * 2, base_channels * 4, 3, 2, act=act),
-            CSPLayer(
-                base_channels * 4, base_channels * 4,
-                n=base_depth * 3, depthwise=depthwise, act=act
-            ),
+            CSPLayer(base_channels * 4, base_channels * 4, n=base_depth * 3, depthwise=depthwise, act=act)
         )
-
         # dark4
         self.dark4 = nn.Sequential(
             Conv(base_channels * 4, base_channels * 8, 3, 2, act=act),
-            CSPLayer(
-                base_channels * 8, base_channels * 8,
-                n=base_depth * 3, depthwise=depthwise, act=act
-            ),
+            CSPLayer(base_channels * 8, base_channels * 8, n=base_depth * 3, depthwise=depthwise, act=act)
         )
-
         # dark5
         self.dark5 = nn.Sequential(
             Conv(base_channels * 8, base_channels * 16, 3, 2, act=act),
             SPPBottleneck(base_channels * 16, base_channels * 16, activation=act),
-            CSPLayer(
-                base_channels * 16, base_channels * 16, n=base_depth,
-                shortcut=False, depthwise=depthwise, act=act
-            ),
+            CSPLayer(base_channels * 16, base_channels * 16, n=base_depth, shortcut=False, depthwise=depthwise, act=act)
         )
-
         self._load_pretrain(pretrain)
 
 
     def _load_pretrain(self, is_pretrain):
         if is_pretrain and self.model_tag == 'nano':
-            ckpt_path = '../../samples/cspdarknet_nano.pt'
+            ckpt_path = '/home/tjm/Documents/python/pycharmProjects/centerdet/samples/cspdarknet_nano.pt'
             pretrain_ckpt = torch.load(ckpt_path)
             self.load_state_dict(pretrain_ckpt)
             print('=> loading pretrained model from: {}'.format(ckpt_path))

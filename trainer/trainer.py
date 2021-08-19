@@ -24,6 +24,7 @@ class Trainer(object):
         self._iter = 1
         self.epoch = 1
         self.total_epochs = cfg.schedule.total_epochs
+        self._init_scheduler()
 
     def set_device(self, batch_per_gpu, gpu_ids, device):
         """
@@ -153,7 +154,7 @@ class Trainer(object):
         #     for param_group in self.optimizer.param_groups:
         #         param_group['lr'] = self.cfg.schedule.optimizer.lr
 
-        self._init_scheduler()
+
         self.lr_scheduler.last_epoch = start_epoch - 1
         # print(self.optimizer.param_groups)
         # resume learning rate of last epoch
@@ -249,4 +250,4 @@ class Trainer(object):
         print(self.epoch - 1)
         self.lr_scheduler.last_epoch = self.epoch - 1
         print(self.lr_scheduler.get_last_lr())
-        plot_lr_scheduler(self.optimizer, self.lr_scheduler, 160)
+        plot_lr_scheduler(self.optimizer, self.lr_scheduler, 120)
