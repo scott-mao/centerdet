@@ -64,7 +64,6 @@ class DWConv(nn.Module):
 
 class Focus(nn.Module):
     """Focus width and height information into channel space."""
-
     def __init__(self, in_channels, out_channels, ksize=1, stride=1, act="SiLU"):
         super(Focus, self).__init__()
         self.conv = BaseConv(in_channels * 4, out_channels, ksize, stride, act=act)
@@ -122,7 +121,6 @@ class SPPBottleneck(nn.Module):
 
 class CSPLayer(nn.Module):
     """C3 in yolov5, CSP Bottleneck with 3 convolutions"""
-
     def __init__(
         self, in_channels, out_channels, n=1,
         shortcut=True, expansion=0.5, depthwise=False, act="SiLU"
