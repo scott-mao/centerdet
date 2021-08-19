@@ -28,8 +28,8 @@ model:
 data:
   train:
     name: coco # label format
-    img_path: coco/train2017
-    ann_path: coco/annotations/instances_train2017.json
+    img_path: coco/COCO_2017_Train_Images/train2017
+    ann_path: coco/COCO_2017_Train_Val_annotations/annotations/instances_train2017.json
     input_size: [320, 320] # [w, h]
     keep_ratio: True
     pipeline:
@@ -47,16 +47,16 @@ data:
       class_num: 80
       gt_type: ttfnet
     loader:
-      batch_size: 32
-      num_workers: 8
+      batch_size: 40
+      num_workers: 12
       shuffle: True
-      pin_memery: True
+      pin_memory: True
       drop_last: True
 
   val:
     name: coco
-    img_path: coco/val2017
-    ann_path: coco/annotations/instances_val2017.json
+    img_path: coco/COCO_2017_Val_Images/val2017
+    ann_path: coco/COCO_2017_Train_Val_annotations/annotations/instances_val2017.json
     input_size: [320, 320] # [w, h]
     keep_ratio: True
     pipeline:
@@ -67,20 +67,20 @@ data:
       batch_size: 16
       num_workers: 8
       shuffle: False
-      pin_memery: True
+      pin_memory: True
       drop_last: False
 
 schedule:
   optimizer:
     name: SGD
-    lr: 0.015
+    lr: 0.007  # 0.015
     momentum: 0.9
     weight_decay: 0.0004
   warmup:
     name: linear
     steps: 1000
     ratio: 0.1
-  total_epochs: 160
+  total_epochs: 120
   lr_schedule:
     name: LambdaLR  #MultiStepLR
     lr_final: 0.02

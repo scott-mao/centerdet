@@ -21,7 +21,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, default='config/PAFNet_lite.yaml',
                         help='train config file path')
-    parser.add_argument('--resume', nargs='?', const=True, default=False,
+    parser.add_argument('--resume', nargs='?', const=True, default=True,
                         help='resume most recent training')
     parser.add_argument('--device', type=str, default='0',
                         help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
@@ -80,7 +80,6 @@ def main(opt):
     val_dataset = build_dataset(cfg.data.val, 'val')
 
 
-
     # TODO add 'build_loader' adaptation, do not expose such code to high-level api
     train_loader = data.DataLoader(train_dataset,
                                    batch_size=train_loader_cfg.batch_size,
@@ -88,6 +87,7 @@ def main(opt):
                                    shuffle=train_loader_cfg.shuffle,
                                    pin_memory=train_loader_cfg.pin_memory,
                                    collate_fn=collate_ttf)
+
     val_loader = data.DataLoader(val_dataset,
                                  batch_size=val_loader_cfg.batch_size,
                                  num_workers=val_loader_cfg.num_workers,
