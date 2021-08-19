@@ -45,6 +45,11 @@ data:
       normalize: [[123.675, 116.28, 103.53], [58.395, 57.12, 57.375]]
       class_num: 80
       gt_type: ttfnet
+    loader:
+      batch_size: 16
+      pin_memery: True
+      drop_last: True
+      num_workers: 8
   val:
     name: coco
     img_path: coco/val2017

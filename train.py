@@ -72,6 +72,10 @@ def main(opt):
     model = build_model(cfg.model).to(device)
 
     logger.log('Setting up data...')
+
+
+
+
     train_dataset = build_dataset(cfg.data.train, 'train')
     val_dataset = build_dataset(cfg.data.val, 'val')
     train_loader = data.DataLoader(train_dataset,
