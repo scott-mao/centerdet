@@ -223,8 +223,6 @@ class CSPDarknet(nn.Module):
 
 if __name__ == '__main__':
 
-    from flops import flops_info
-
     inp = torch.randn((2, 3, 320, 320))
     model = CSPDarknet(0.33, 0.25, depthwise=True, act="SiLU")
 
