@@ -2,7 +2,6 @@
 Copy from YOLOX
 
 """
-
 import torch
 import torch.nn as nn
 from model.module.layers import act_layers

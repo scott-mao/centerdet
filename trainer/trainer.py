@@ -154,7 +154,7 @@ class Trainer(object):
 
         self._init_scheduler()
         self.lr_scheduler.last_epoch = start_epoch - 1
-        print(self.optimizer.param_groups)
+        # print(self.optimizer.param_groups)
         # resume learning rate of last epoch
         # TODO BUG resume lr wrong
         # if start_epoch > 1:
