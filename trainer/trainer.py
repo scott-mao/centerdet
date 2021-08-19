@@ -9,6 +9,7 @@ from tqdm import tqdm
 # logger = logging.getLogger(__name__)
 from icecream import ic
 
+
 class Trainer(object):
     """
     Epoch based trainer

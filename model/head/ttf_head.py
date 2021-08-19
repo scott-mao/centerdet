@@ -10,6 +10,7 @@ from model.loss.focal_loss import FocalLoss
 from data.transform.warp import warp_boxes
 from model.module.nms import non_max_suppression
 from model.module.init_weights import normal_init, xavier_init
+
 from icecream import ic
 
 class HeadModule(nn.Module):
@@ -72,7 +73,7 @@ class TTFHead(nn.Module):
                  nms_thr=0.4,
                  topk=100,
                  stride=4,
-                 wh_offset_base=16):
+                 wh_offset_base=16, use_asg=True):
         super(TTFHead, self).__init__()
         self.topk = topk
         self.wh_offset_base = wh_offset_base

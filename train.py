@@ -21,7 +21,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--config', type=str, default='config/PAFNet_lite.yaml',
                         help='train config file path')
-    parser.add_argument('--resume', nargs='?', const=True, default=True,
+    parser.add_argument('--resume', nargs='?', const=True, default=False,
                         help='resume most recent training')
     parser.add_argument('--device', type=str, default='0',
                         help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
