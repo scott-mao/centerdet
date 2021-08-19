@@ -12,6 +12,6 @@ def main(config, input_shape=(3, 320, 320)):
 
 
 if __name__ == '__main__':
-    cfg_path = 'config/centerdet.yaml'
+    cfg_path = 'config/PAFNet_lite.yaml'
     load_config(cfg, cfg_path)
     main(config=cfg, input_shape=(3, 320, 320))
