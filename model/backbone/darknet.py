@@ -155,9 +155,9 @@ class CSPLayer(nn.Module):
 
 class CSPDarknet(nn.Module):
     def __init__(
-        self, dep_mul, wid_mul,
+        self, dep_mul=0.33, wid_mul=0.25,
         out_features=('dark2', 'dark3', 'dark4', 'dark5'),
-        depthwise=False, act="silu"):
+        depthwise=False, act="silu", pretrain=True):
         super(CSPDarknet, self).__init__()
 
         assert out_features, 'please provide output features of Darknet'
@@ -167,6 +167,11 @@ class CSPDarknet(nn.Module):
         base_channels = int(wid_mul * 64)  # 64
         base_depth = max(round(dep_mul * 3), 1)  # 3
 
+
+        if dep_mul == 0.33 and wid_mul == 0.25:
+            self.model_tag = 'nano'
+        else:
+            self.model_tag = None
 
         self.out_channels = [base_channels * 2, base_channels * 4, base_channels * 8, base_channels * 16]
         # stem
@@ -209,6 +214,17 @@ class CSPDarknet(nn.Module):
             ),
         )
 
+        self._load_pretrain(pretrain)
+
+
+    def _load_pretrain(self, is_pretrain):
+        if is_pretrain and self.model_tag == 'nano':
+            ckpt_path = '../../samples/cspdarknet_nano.pt'
+            pretrain_ckpt = torch.load(ckpt_path)
+            self.load_state_dict(pretrain_ckpt)
+            print('=> loading pretrained model from: {}'.format(ckpt_path))
+
+
     def forward(self, x):
         output = []
         x = self.stem(x)
@@ -227,16 +243,13 @@ if __name__ == '__main__':
 
     from flops import flops_info
 
-    inp = torch.randn((2, 3, 320, 320))
+    # inp = torch.randn((2, 3, 320, 320))
     model = CSPDarknet(0.33, 0.25, depthwise=True, act="silu")
+
 
     # print(model)
     # flops_info(model)
 
-    for x in model(inp):
-        print(x.shape)
-
-
-
-
+    # for x in model(inp):
+    #     print(x.shape)
 
