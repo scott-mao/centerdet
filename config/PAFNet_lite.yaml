@@ -25,6 +25,10 @@ model:
       loc_weight: 1.
       reg_weight: 5.
       num_classes: 80
+      score_thr: 0.02
+      nms_thr: 0.4
+      topk: 100
+      use_asg: False
 data:
   train:
     name: coco # label format
@@ -48,7 +52,7 @@ data:
       gt_type: ttfnet
     loader:
       batch_size: 40
-      num_workers: 12
+      num_workers: 8
       shuffle: True
       pin_memory: True
       drop_last: True
