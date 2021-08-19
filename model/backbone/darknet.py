@@ -154,19 +154,21 @@ class CSPLayer(nn.Module):
 
 
 class CSPDarknet(nn.Module):
-
     def __init__(
         self, dep_mul, wid_mul,
-        out_features=("dark3", "dark4", "dark5"),
+        out_features=('dark2', 'dark3', 'dark4', 'dark5'),
         depthwise=False, act="silu"):
         super(CSPDarknet, self).__init__()
-        assert out_features, "please provide output features of Darknet"
+
+        assert out_features, 'please provide output features of Darknet'
         self.out_features = out_features
         Conv = DWConv if depthwise else BaseConv
 
         base_channels = int(wid_mul * 64)  # 64
         base_depth = max(round(dep_mul * 3), 1)  # 3
 
+
+        self.out_channels = [base_channels * 2, base_channels * 4, base_channels * 8, base_channels * 16]
         # stem
         self.stem = Focus(3, base_channels, ksize=3, act=act)
 
@@ -208,18 +210,16 @@ class CSPDarknet(nn.Module):
         )
 
     def forward(self, x):
-        outputs = {}
+        output = []
         x = self.stem(x)
-        outputs["stem"] = x
-        x = self.dark2(x)
-        outputs["dark2"] = x
-        x = self.dark3(x)
-        outputs["dark3"] = x
-        x = self.dark4(x)
-        outputs["dark4"] = x
-        x = self.dark5(x)
-        outputs["dark5"] = x
-        return {k: v for k, v in outputs.items() if k in self.out_features}
+        for i in range(2, 6):
+            stage_tag = 'dark{}'.format(i)
+            stage = getattr(self, stage_tag)
+            x = stage(x)
+            if stage_tag in self.out_features:
+                output.append(x)
+        return output
+
 
 
 
@@ -231,8 +231,10 @@ if __name__ == '__main__':
     model = CSPDarknet(0.33, 0.25, depthwise=True, act="silu")
 
     # print(model)
-    flops_info(model)
+    # flops_info(model)
 
+    for x in model(inp):
+        print(x.shape)
 
 
 
