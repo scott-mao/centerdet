@@ -17,8 +17,10 @@ cfg.model.arch.head = CfgNode(new_allowed=True)
 # DATASET related params
 cfg.data = CfgNode(new_allowed=True)
 cfg.data.train = CfgNode(new_allowed=True)
+cfg.data.train.loader = CfgNode(new_allowed=True)
 cfg.data.val = CfgNode(new_allowed=True)
-cfg.device = CfgNode(new_allowed=True)
+cfg.data.val.loader = CfgNode(new_allowed=True)
+# cfg.device = CfgNode(new_allowed=True)
 # dataloader
 # cfg.dataloader = CfgNode(new_allowed=True)
 # train

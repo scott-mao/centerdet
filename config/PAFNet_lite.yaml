@@ -2,6 +2,7 @@
 work:
   proj_name: PAFNet_lite
   save_path: workspace
+  device: cuda:0
 #  weights_path: # YOUR_MODEL_PATH
 model:
   arch:
@@ -46,10 +47,12 @@ data:
       class_num: 80
       gt_type: ttfnet
     loader:
-      batch_size: 16
+      batch_size: 32
+      num_workers: 8
+      shuffle: True
       pin_memery: True
       drop_last: True
-      num_workers: 8
+
   val:
     name: coco
     img_path: coco/val2017
@@ -60,10 +63,13 @@ data:
       normalize: [[123.675, 116.28, 103.53], [58.395, 57.12, 57.375]]
       class_num: 80
       gt_type: ttfnet
-#device:
-#  gpu_ids: [0]
-#  workers_per_gpu: 4
-#  batchsize_per_gpu: 64
+    loader:
+      batch_size: 16
+      num_workers: 8
+      shuffle: False
+      pin_memery: True
+      drop_last: False
+
 schedule:
   optimizer:
     name: SGD

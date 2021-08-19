@@ -19,7 +19,7 @@ def build_dataset(cfg, mode):
         raise NotImplementedError('Unknown dataset type!')
 
 
-def build_loader(cfg, mode, max_iter=3000, start_iter=0):
+def build_dataloader(cfg, mode, max_iter=3000, start_iter=0):
 
     cfg_dataset = cfg.pop('dataset')
     cfg_loader = cfg.pop('loader')
