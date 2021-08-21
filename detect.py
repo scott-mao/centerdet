@@ -20,7 +20,7 @@ def parse_args():
                         help='train config file path')
     parser.add_argument('--model', type=str, default='workspace/PAFNet_lite_exp3/model_best/model_best.pt',
                         help='model file path')
-    parser.add_argument('--img-path', type=str, default='test_imgs/2007_001311.jpg',#'coco/val2017/000000001000.jpg',#mchar/mchar_train/001012.png',
+    parser.add_argument('--img-path', type=str, default='test_imgs/2007_001430.jpg',#'coco/val2017/000000001000.jpg',#mchar/mchar_train/001012.png',
                         help='image file path')
     parser.add_argument('--device', type=str, default='cpu',
                         help='cuda device, i.e. 0 or 0,1,2,3 or cpu')

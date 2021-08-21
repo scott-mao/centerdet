@@ -14,13 +14,14 @@ from tools import plot_lr_scheduler
 from icecream import ic
 # from data.dataset import build_loader
 from tqdm import tqdm
-
+from model.backbone.pp_mbnetv2 import MobileNetV2
+from collections import OrderedDict
 
 if __name__ == '__main__':
     # ckpt = torch.load('/home/tjm/Documents/python/pycharmProjects/centerdet/samples/mbv3_large.old.pth.tar', map_location='cpu')['state_dict']
     # for k, v in ckpt.items():
     #     print(k, v.shape)
-    load_config(cfg, 'config/centerdet_csp.yaml')
+    # load_config(cfg, 'config/centerdet_csp.yaml')
     # # print(cfg.data)
     # loader = build_loader(cfg.data.train, 'train')
     # for i in tqdm(loader):
@@ -80,7 +81,60 @@ if __name__ == '__main__':
     # plt.show()
     #--------------------------------------------------------------------------------#
 
-    model = build_model(cfg.model)
-    inp = torch.randn((4, 3, 320, 320))
-    im = model(inp)
-    print(im[1].shape)
+    # model = build_model(cfg.model)
+    # inp = torch.randn((4, 3, 320, 320))
+    # im = model(inp)
+    # print(im[1].shape)
+
+    new_state = OrderedDict()
+    ckpt = torch.load('/home/tjm/Documents/python/pycharmProjects/centerdet/samples/MobileNetV2_ssld_pretrained.pth')
+    m = MobileNetV2()
+
+    key_map = {
+        'conv1._conv.weight': 'conv1._conv.weight',
+        'conv1._batch_norm.weight': 'conv1._batch_norm.weight',
+        'conv1._batch_norm.bias': 'conv1._batch_norm.bias',
+        'conv1._batch_norm.running_mean': 'conv1._batch_norm._mean',
+        'conv1._batch_norm.running_var': 'conv1._batch_norm._variance',
+    }
+
+    for k, v in m.state_dict().items():
+
+        key_points = k.split('.')
+        if key_points[-1] == 'num_batches_tracked':
+            new_state[k] = v
+            continue
+
+        if key_points[-1] == 'running_mean':
+            tail = '_mean'
+        elif key_points[-1] == 'running_var':
+            tail = '_variance'
+        else:
+            tail = key_points[-1]
+
+        if k in key_map.keys():
+            new_key = key_map[k]
+            # new_state[k] = ckpt[key_map[k]]
+        elif len(key_points) == 6:
+            new_key = 'conv{}.{}.{}.{}.{}'.format(int(key_points[1]) + 2, key_points[2], key_points[3], key_points[4], tail)
+        elif len(key_points) == 7:
+            conv_num = int(key_points[1]) + 2
+            sub_conv_num = int(key_points[3]) + 2
+            new_key = 'conv{}.conv{}_{}.{}.{}.{}'.format(conv_num,
+                                                         conv_num,
+                                                         sub_conv_num,
+                                                         key_points[4],
+                                                         key_points[5],
+                                                         tail)
+        else:
+            raise RuntimeError
+
+        if new_key not in ckpt:
+            print(new_key)
+            raise RuntimeError
+        else:
+            assert v.shape == ckpt[new_key].shape
+            print(k)
+            new_state[k] = ckpt[new_key]
+    m.load_state_dict(new_state, strict=True)
+    torch.save(m.state_dict(), './MobileNetV2_ssld_pretrained.pt')

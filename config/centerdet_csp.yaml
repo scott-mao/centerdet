@@ -1,6 +1,6 @@
 # Config File For CenterDet
 work:
-  proj_name: PAFNet_lite
+  proj_name: centerdet_csp
   save_path: workspace
   device: cuda:0
 #  weights_path: # YOUR_MODEL_PATH

@@ -102,7 +102,7 @@ class InvresiBlocks(nn.Module):
 
 
 class MobileNetV2(nn.Module):
-    def __init__(self, scale=1.0, prefix_name=""):
+    def __init__(self, scale=1.0, pretrain=True):
         super(MobileNetV2, self).__init__()
         self.scale = scale
 
@@ -138,26 +138,37 @@ class MobileNetV2(nn.Module):
             self.block_list.append(block)
             in_c = int(c * scale)
 
-        self.out_c = int(1280 * scale) if scale > 1.0 else 1280
-        self.conv9 = ConvBNLayer(
-            num_channels=in_c,
-            num_filters=self.out_c,
-            filter_size=1,
-            stride=1,
-            padding=0)
+        self._init_weights(pretrain)
+        # self.out_c = int(1280 * scale) if scale > 1.0 else 1280
+        # self.conv9 = ConvBNLayer(
+        #     num_channels=in_c,
+        #     num_filters=self.out_c,
+        #     filter_size=1,
+        #     stride=1,
+        #     padding=0)
+
+    def _init_weights(self, pretrain):
+        if pretrain and self.scale == 1.:
+            ckpt_path = 'samples/MobileNetV2_ssld_pretrained.pt'
+            pretrain_ckpt = torch.load(ckpt_path)
+            self.load_state_dict(pretrain_ckpt, strict=True)
+            print('=> loading pretrained model from: {}'.format(ckpt_path))
+            del pretrain_ckpt
 
     def forward(self, inputs):
         y = self.conv1(inputs, if_act=True)
         for block in self.block_list:
             y = block(y)
-        y = self.conv9(y, if_act=True)
+        # y = self.conv9(y, if_act=True)
         return y
 
 
 
 if __name__ == '__main__':
+    inp = torch.randn((1, 3, 320, 320))
     m = MobileNetV2()
-    print(m)
+    # for k, v in m.state_dict().items():
+    #     print(k, v.shape)
 
 
 
