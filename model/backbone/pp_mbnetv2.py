@@ -70,7 +70,7 @@ class InvertedResidualUnit(nn.Module):
 
 
 class InvresiBlocks(nn.Module):
-    def __init__(self, in_c, t, c, n, s, name):
+    def __init__(self, in_c, t, c, n, s):
         super(InvresiBlocks, self).__init__()
 
         self._first_block = InvertedResidualUnit(
@@ -82,7 +82,7 @@ class InvresiBlocks(nn.Module):
             padding=1,
             expansion_factor=t)
 
-        self._block_list = []
+        self._block_list = nn.ModuleList()
         for i in range(1, n):
             block = InvertedResidualUnit(
                 num_channels=c,
@@ -129,15 +129,12 @@ class MobileNetV2(nn.Module):
         for layer_setting in bottleneck_params_list:
             t, c, n, s = layer_setting
             i += 1
-            block = self.add_sublayer(
-                prefix_name + "conv" + str(i),
-                sublayer=InvresiBlocks(
-                    in_c=in_c,
-                    t=t,
-                    c=int(c * scale),
-                    n=n,
-                    s=s,
-                    name=prefix_name + "conv" + str(i)))
+            block = InvresiBlocks(
+                in_c=in_c,
+                t=t,
+                c=int(c * scale),
+                n=n,
+                s=s)
             self.block_list.append(block)
             in_c = int(c * scale)
 
