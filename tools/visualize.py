@@ -26,7 +26,7 @@ def plot_bboxes(img, dets, class_names):
     return img
 
 
-def plot_results(img, dets, class_names, out_size=(320, 320)):
+def plot_results(img, dets, class_names, vis_thr=0.3, out_size=(320, 320), show_text=True):
     h, w = img.shape[:2]
 
     # pad_h, pad_w = out_size[0] -
@@ -38,22 +38,21 @@ def plot_results(img, dets, class_names, out_size=(320, 320)):
     for box in dets:
         x0, y0, x1, y1 = box[:4].astype(np.int)
         score, label = box[4], int(box[5])
+        if score < vis_thr:
+            continue
         # color = self.cmap(i)[:3]
         color = (COLORS_TAB[label] * 255).astype(np.uint8).tolist()
         cv2.rectangle(img, (x0, y0), (x1, y1), color, 2, cv2.LINE_4)
 
-        font = cv2.FONT_HERSHEY_SIMPLEX
-
-        text = '{}:{:.2f}'.format(class_names[label], score)
-        # print(text)
-        txt_color = (0, 0, 0) if np.mean(COLORS_TAB[label]) > 0.5 else (255, 255, 255)
-
-
-        txt_size = cv2.getTextSize(text, font, 0.5, 1)[0]
-        cv2.rectangle(img,
-                      (x0, y0 - txt_size[1] - 1),
-                      (x0 + txt_size[0] + txt_size[1], y0 - 1), color, -1)
-        cv2.putText(img, text, (x0, y0 - 1),
+        if show_text:
+            font = cv2.FONT_HERSHEY_SIMPLEX
+            text = '{}:{:.2f}'.format(class_names[label], score)
+            txt_color = (0, 0, 0) if np.mean(COLORS_TAB[label]) > 0.5 else (255, 255, 255)
+            txt_size = cv2.getTextSize(text, font, 0.5, 1)[0]
+            cv2.rectangle(img,
+                          (x0, y0 - txt_size[1] - 1),
+                          (x0 + txt_size[0] + txt_size[1], y0 - 1), color, -1)
+            cv2.putText(img, text, (x0, y0 - 1),
                     font, 0.5, txt_color, thickness=1)
     return img
 

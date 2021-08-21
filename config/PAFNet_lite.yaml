@@ -56,7 +56,6 @@ data:
       shuffle: True
       pin_memory: True
       drop_last: True
-
   val:
     name: coco
     img_path: coco/val2017

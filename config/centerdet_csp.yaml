@@ -84,7 +84,7 @@ schedule:
     name: linear
     steps: 1000
     ratio: 0.1
-  total_epochs: 120
+  total_epochs: 90
   lr_schedule:
     name: LambdaLR  #MultiStepLR
     lr_final: 0.02

@@ -9,7 +9,10 @@ from torch.utils.data.sampler import RandomSampler, SequentialSampler, BatchSamp
 
 
 def build_dataset(cfg, mode):
+    if 'loader' in cfg:
+        cfg.pop('loader')
     dataset_cfg = copy.deepcopy(cfg)
+
     name = dataset_cfg.pop('name')
     if name == 'coco':
         return CocoDataset(mode=mode, **dataset_cfg)
