@@ -25,9 +25,9 @@ from trainer import build_trainer
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--task', type=str, default='val', help='task to run, test or val')
-    parser.add_argument('--config', type=str, default='config/PAFNet_lite.yaml',
+    parser.add_argument('--config', type=str, default='config/centerdet_csp.yaml',
                         help='model config file(.yml) path')
-    parser.add_argument('--weights', type=str, default='workspace/PAFNet_lite_exp3/model_best/model_best.pt',
+    parser.add_argument('--weights', type=str, default='workspace/centerdet_csp_exp/model_best/model_best.pt',
                         help='model weight file(.pth) path')
     parser.add_argument('--iou_thr', type=float, default=0.3,
                         help='model weight file(.pth) path')

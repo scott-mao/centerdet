@@ -16,11 +16,11 @@ logger = logging.getLogger(__name__)
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=str, default='config/PAFNet_lite.yaml',
+    parser.add_argument('--config', type=str, default='config/centerdet_csp.yaml',
                         help='train config file path')
-    parser.add_argument('--model', type=str, default='workspace/PAFNet_lite_exp3/model_best/model_best.pt',
+    parser.add_argument('--model', type=str, default='workspace/centerdet_csp_exp/model_best/model_best.pt',
                         help='model file path')
-    parser.add_argument('--img-path', type=str, default='test_imgs/2007_001430.jpg',#'coco/val2017/000000001000.jpg',#mchar/mchar_train/001012.png',
+    parser.add_argument('--img-path', type=str, default='test_imgs/2007_001311.jpg',#'coco/val2017/000000001000.jpg',#mchar/mchar_train/001012.png',
                         help='image file path')
     parser.add_argument('--device', type=str, default='cpu',
                         help='cuda device, i.e. 0 or 0,1,2,3 or cpu')
@@ -62,7 +62,7 @@ class Detector(object):
         # ic(dets)
 
         # img = plot_bboxes(meta['raw_img'], dets, self.cfg.class_names)
-        img = plot_results(meta['raw_img'], dets, self.cfg.class_names, vis_thr=0.3, out_size=(640, 640))
+        img = plot_results(meta['raw_img'], dets, self.cfg.class_names, vis_thr=0.3, out_size=(320, 320))
         # cv2.imshow('cv', img)
         # cv2.waitKey(0)
         plt.imshow(img)

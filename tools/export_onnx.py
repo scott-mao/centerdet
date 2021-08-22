@@ -12,9 +12,9 @@ from tools import Logger, cfg, load_config, load_model_weight
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--config', type=str, default='../config/centerdet.yaml',
+    parser.add_argument('--config', type=str, default='../config/centerdet_csp.yaml',
                         help='train config file path')
-    parser.add_argument('--model-path', type=str, default='../workspace/centerdet_exp7/weights/last.pt',
+    parser.add_argument('--model-path', type=str, default='../workspace/centerdet_csp_exp/model_best/model_best.pt',
                         help='model file path')
     parser.add_argument('--save-path', type=str, default='../samples/model.onnx',
                         help='exported onnx file path')
@@ -59,7 +59,7 @@ def export_model():
 # python3 -m onnxsim input_onnx_model output_onnx_model
 def simplify_model():
     model_path = '../samples/model.onnx'
-    save_path = '../samples/model_test.onnx'
+    save_path = '../samples/model_sim.onnx'
     os.system('python3 -m onnxsim {} {}'.format(model_path, save_path))
 
 

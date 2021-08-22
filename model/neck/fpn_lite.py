@@ -102,7 +102,7 @@ class FPNLite(nn.Module):
 
 
 if __name__ == '__main__':
-    m_ = LiteFPN(in_channels=(16, 32, 64, 128))
+    m_ = FPNLite(in_channels=(16, 32, 64, 128))
     inp = [torch.randn((4, 16, 80, 80)), torch.randn((4, 32, 40, 40)), torch.randn((4, 64, 20, 20)), torch.randn((4, 128, 10, 10))]
     print(m_(inp).shape)
 

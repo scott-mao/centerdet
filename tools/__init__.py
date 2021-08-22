@@ -6,4 +6,4 @@ from .logger import Logger, MovingAverage, AverageMeter
 from .distributed_data_parallel import DDP
 from .config import cfg, load_config
 from .visualize import plot_results, plot_bboxes, plot_lr_scheduler
-from .flops_counter import get_model_complexity_info
+from .flops_counter import get_model_complexity_info, flops_to_string, params_to_string
