@@ -20,6 +20,6 @@ def flops_info(model, input_shape=(3, 320, 320)):
 
 
 if __name__ == '__main__':
-    cfg_path = '../config/PAFNet_lite.yaml'
+    cfg_path = '../config/centerdet_csp.yaml'
     load_config(cfg, cfg_path)
     main(config=cfg, input_shape=(3, 416, 416))

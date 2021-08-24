@@ -22,12 +22,12 @@ def build_dataset(cfg, mode):
         raise NotImplementedError('Unknown dataset type!')
 
 
-def build_dataloader(cfg, mode, max_iter=3000, start_iter=0):
+def build_dataloader(cfg, mode, max_iter=300000, start_iter=0):
 
-    cfg_dataset = cfg.pop('dataset')
+    # cfg_dataset = cfg.pop('dataset')
     cfg_loader = cfg.pop('loader')
 
-    dataset = build_dataset(cfg_dataset, mode=mode)
+    dataset = build_dataset(cfg, mode=mode)
     if cfg_loader.shuffle:
         sampler = RandomSampler(dataset)
     else:
@@ -38,10 +38,10 @@ def build_dataloader(cfg, mode, max_iter=3000, start_iter=0):
         batch_sampler = IterationBasedBatchSampler(batch_sampler=batch_sampler, num_iterations=max_iter, start_iter=start_iter)
 
     data_loader = DataLoader(dataset,
-                             num_workers=cfg_loader.workers,
+                             num_workers=cfg_loader.num_workers,
                              batch_sampler=batch_sampler,
                              pin_memory=cfg_loader.pin_memory,
-                             collate_fn=collate_ttf if cfg_loader.collate_fn == 'ttfnet' else collate_center)
+                             collate_fn=collate_ttf)
 
     return data_loader
 

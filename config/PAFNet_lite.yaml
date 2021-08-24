@@ -27,6 +27,7 @@ model:
       num_classes: 80
       score_thr: 0.02
       nms_thr: 0.4
+      conv_num: 2
       topk: 100
       use_asg: False
 data:

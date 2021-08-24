@@ -27,6 +27,7 @@ model:
       num_classes: 80
       score_thr: 0.02
       nms_thr: 0.4
+      conv_num: 1
       topk: 100
       use_asg: False
 data:
@@ -34,7 +35,7 @@ data:
     name: coco # label format
     img_path: coco/train2017
     ann_path: coco/annotations/instances_train2017.json
-    input_size: [416, 416] # [w, h]
+    input_size: [320, 320] # [w, h]
     keep_ratio: True
     pipeline:
       perspective: 0.0
@@ -61,7 +62,7 @@ data:
     name: coco
     img_path: coco/val2017
     ann_path: coco/annotations/instances_val2017.json
-    input_size: [416, 416] # [w, h]
+    input_size: [320, 320] # [w, h]
     keep_ratio: True
     pipeline:
       normalize: [[123.675, 116.28, 103.53], [58.395, 57.12, 57.375]]
@@ -90,7 +91,7 @@ schedule:
     lr_final: 0.02
 #    milestones: [130, 160, 150, 155]
 #    gamma: 0.1
-  val_intervals: 3
+  val_intervals: 2
 evaluator:
   name: CocoDetectionEvaluator
   save_key: mAP

@@ -4,7 +4,7 @@ import torch
 
 
 class Gridmask(object):
-    def __init__(self, use_h, use_w, rotate=1, offset=False, ratio=0.5, mode=1, prob=0.9):
+    def __init__(self, use_h, use_w, rotate=1, offset=False, ratio=0.5, mode=1, prob=0.7):
         self.use_h = use_h
         self.use_w = use_w
         self.rotate = rotate

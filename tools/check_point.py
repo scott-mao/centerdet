@@ -8,7 +8,6 @@ def load_model_weight(model, checkpoint, logger):
         state_dict = {k[7:]: v for k, v in checkpoint['state_dict'].items()}
 
     model_state_dict = model.module.state_dict() if hasattr(model, 'module') else model.state_dict()
-
     # check loaded parameters and created model parameters
     for k in state_dict:
         if k in model_state_dict:
@@ -23,7 +22,6 @@ def load_model_weight(model, checkpoint, logger):
             logger.log('No param {}.'.format(k))
             state_dict[k] = model_state_dict[k]
     model.load_state_dict(state_dict, strict=False)
-
 
 @rank_filter
 def save_model(model, path, epoch, optimizer=None, scheduler=None):

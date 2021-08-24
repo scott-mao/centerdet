@@ -107,6 +107,8 @@ class FPN(nn.Module):
 
 
 
+
+
 if __name__ == '__main__':
     inc = [24, 116, 232, 464]
     m_ = FPN(inc, out_channels=64)

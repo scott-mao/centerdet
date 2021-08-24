@@ -69,6 +69,7 @@ class TTFHead(nn.Module):
                  num_classes,
                  loc_weight,
                  reg_weight,
+                 conv_num,
                  score_thr=0.02,
                  nms_thr=0.4,
                  topk=100,
@@ -91,8 +92,8 @@ class TTFHead(nn.Module):
         if self.use_asg:
             self.asg_block = ASGModule(lam=0.5)
 
-        self.hm_head = HeadModuleLite(in_channels, ch_out=hm_head_planes, planes_out=num_classes)
-        self.tlrb_head = HeadModuleLite(in_channels, ch_out=wh_head_planes, planes_out=4)
+        self.hm_head = HeadModuleLite(in_channels, ch_out=hm_head_planes, planes_out=num_classes, conv_num=conv_num)
+        self.tlrb_head = HeadModuleLite(in_channels, ch_out=wh_head_planes, planes_out=4, conv_num=conv_num)
 
         self.init_weights()
 

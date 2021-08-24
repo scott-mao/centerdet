@@ -210,7 +210,6 @@ class CSPDarknet(nn.Module):
         x = self.stem(x)
         for i in range(2, 6):
             stage_tag = 'dark{}'.format(i)
-            print(stage_tag)
             stage = getattr(self, stage_tag)
             x = stage(x)
             if stage_tag in self.out_features:

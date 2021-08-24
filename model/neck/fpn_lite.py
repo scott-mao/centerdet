@@ -24,9 +24,33 @@ class DeConv(nn.Module):
         return self.convs(x)
 
 
-class LiteUpsamle(nn.Module):
+class FeatureFusion(nn.Module):
+    def __init__(self, in_channels, out_channels, stride=1):
+        super(FeatureFusion, self).__init__()
+        self.convs = nn.Sequential(
+            ConvNormAct(in_channels, in_channels, k=5, s=stride, g=in_channels, act='ReLU6'),
+            ConvNormAct(in_channels, out_channels, k=1, s=stride, act='ReLU6')
+        )
+
+    def forward(self, x):
+        return self.convs(x)
+
+
+class UpsampleLite(nn.Module):
     def __init__(self, in_channels, out_channels):
-        super(LiteUpsamle, self).__init__()
+        super(UpsampleLite, self).__init__()
+        self.conv_up = nn.Sequential(
+            FeatureFusion(in_channels, out_channels),
+            nn.UpsamplingBilinear2d(scale_factor=2),
+        )
+
+    def forward(self, x):
+        return self.conv_up(x)
+
+
+class Upsample(nn.Module):
+    def __init__(self, in_channels, out_channels):
+        super(Upsample, self).__init__()
         self.deconv = DeConv(in_channels, out_channels)
         self.conv_up = nn.Sequential(
             LiteConv(in_channels, out_channels),
@@ -70,7 +94,7 @@ class FPNLite(nn.Module):
 
         for idx, out_c in enumerate(planes):
             in_c = self.ch_in[idx] if idx == 0 else self.upper_list[-1]
-            self.upsample_list.append(LiteUpsamle(in_c, out_c))
+            self.upsample_list.append(Upsample(in_c, out_c))
             if idx < self.shortcut_len:
                 self.shortcut_list.append(ShortCut(self.ch_in[idx + 1], out_c, self.shortcut_num[idx]))
                 if self.fusion_method == 'add':

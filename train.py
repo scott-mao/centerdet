@@ -6,7 +6,7 @@ import numpy as np
 
 from tools import (cfg, load_config, Logger, create_workspace, select_device)
 from data.collate import collate_center, collate_ttf
-from data.dataset import build_dataset
+from data.dataset import build_dataset, build_dataloader
 from model.arch import build_model
 from evaluator import build_evaluator
 from trainer import build_trainer
@@ -87,6 +87,8 @@ def main(opt):
                                    shuffle=train_loader_cfg.shuffle,
                                    pin_memory=train_loader_cfg.pin_memory,
                                    collate_fn=collate_ttf)
+
+    # train_loader = build_dataloader(cfg.data.train, mode='train')
 
     val_loader = data.DataLoader(val_dataset,
                                  batch_size=val_loader_cfg.batch_size,

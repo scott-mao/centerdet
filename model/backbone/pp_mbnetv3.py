@@ -292,7 +292,7 @@ class MobileNetV3(nn.Module):
                 init.constant_(m.weight, 1)
                 init.constant_(m.bias, 0)
         if pretrain and self.scale == 1.:
-            ckpt_path = 'samples/MobileNetV3_large_x1_0_ssld_pretrained.pth'
+            ckpt_path = '../samples/MobileNetV3_large_x1_0_ssld_pretrained.pth'
             pretrain_ckpt = torch.load(ckpt_path)
             self.load_state_dict(pretrain_ckpt, strict=True)
             print('=> loading pretrained model from: {}'.format(ckpt_path))
